@@ -15,9 +15,10 @@ public class ReservationProgram {
 
   public void assignSeat() {
     try(Connection connection = dataSource.getConnection()) {
+      connection.setAutoCommit(false);
       // Get available empty seat
       PreparedStatement preparedStatement = connection.prepareStatement("SELECT seat_id FROM " +
-        "seats WHERE user_name IS NULL LIMIT 1");
+        "seats WHERE user_name IS NULL LIMIT 1 FOR UPDATE");
       ResultSet rs = preparedStatement.executeQuery();
       String seatId;
       if(rs.next()) {
@@ -28,11 +29,11 @@ public class ReservationProgram {
       }
 
       // Assign seat to user;
-      preparedStatement = connection.prepareStatement("UPDATE seats SET user_name = ? WHERE seat_id = ?");
-      preparedStatement.setString(1, userName);
-      preparedStatement.setString(2, seatId);
-
-      preparedStatement.executeUpdate();
+      PreparedStatement updateStatement = connection.prepareStatement("UPDATE seats SET user_name = ? WHERE seat_id = ?");
+      updateStatement.setString(1, userName);
+      updateStatement.setString(2, seatId);
+      updateStatement.executeUpdate();
+      connection.commit();
       System.out.println(String.format("Seat %s has been allotted to user %s", seatId, userName));
     } catch (SQLException e) {
       e.printStackTrace();

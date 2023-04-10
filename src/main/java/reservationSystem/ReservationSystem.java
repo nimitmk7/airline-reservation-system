@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.*;
@@ -15,6 +14,7 @@ import java.util.concurrent.*;
 public class ReservationSystem {
 
   private DataSource dataSource;
+
   private void runProgram() {
     List<User> users = getAeroplanePassengers();
     long start = System.nanoTime();
@@ -81,21 +81,13 @@ public class ReservationSystem {
       Properties prop = new Properties();
       prop.load(propsInput);
       this.dataSource = new DataSource(prop.getProperty("DB_URL"));
-      /*
-      // Initialize database
-      DatabaseInitializer databaseInitializer = new DatabaseInitializer(prop.getProperty("DB_URL"),
-        prop.getProperty("CREATE_TABLE_QUERY"), prop.getProperty("INSERT_RECORDS_QUERY"));
-      databaseInitializer.setupDatabase();
-       */
-
-
     } catch (IOException e) {
       e.printStackTrace();
       System.exit(1);
     }
   }
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     ReservationSystem reservationSystem = new ReservationSystem();
     reservationSystem.initialize();
     reservationSystem.runProgram();
