@@ -17,6 +17,7 @@ public class ReservationSystem {
   private DataSource dataSource;
   private void runProgram() {
     List<User> users = getAeroplanePassengers();
+    long start = System.nanoTime();
     ExecutorService executor= Executors.newFixedThreadPool(users.size());
     List<CompletableFuture<Void>> futures = new ArrayList<>();
     for(User user: users) {
@@ -33,6 +34,8 @@ public class ReservationSystem {
       System.out.println("Thread interrupted");
     }
     executor.shutdown();
+    long end = System.nanoTime();
+    System.out.print((end-start)/1000000 + "ms" + "\n");
   }
 
   private void publishResults() {
@@ -97,5 +100,17 @@ public class ReservationSystem {
     reservationSystem.initialize();
     reservationSystem.runProgram();
     reservationSystem.publishResults();
+    reservationSystem.cleanupSeatChart();
+  }
+
+  private void cleanupSeatChart() {
+    try (Connection connection = dataSource.getConnection();
+         PreparedStatement preparedStatement = connection.prepareStatement("UPDATE seats" +
+           " SET user_name = null WHERE id > 0");) {
+      preparedStatement.executeUpdate();
+    } catch (SQLException e) {
+      System.out.println("Cleanup failed");
+      System.exit(1);
+    }
   }
 }
