@@ -15,7 +15,7 @@ public class DataSource {
     config.setJdbcUrl(jdbcUrl);
     config.setMaximumPoolSize(30);
     config.setMinimumIdle(5);
-    config.setDriverClassName("com.mysql.jdbc.Driver");
+    config.setDriverClassName("com.mysql.cj.jdbc.Driver");
     ds = new HikariDataSource(config);
   }
 

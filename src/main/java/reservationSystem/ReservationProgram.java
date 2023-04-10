@@ -18,7 +18,7 @@ public class ReservationProgram {
       connection.setAutoCommit(false);
       // Get available empty seat
       PreparedStatement preparedStatement = connection.prepareStatement("SELECT seat_id FROM " +
-        "seats WHERE user_name IS NULL LIMIT 1 FOR UPDATE");
+        "seats WHERE user_name IS NULL LIMIT 1 FOR UPDATE SKIP LOCKED;");
       ResultSet rs = preparedStatement.executeQuery();
       String seatId;
       if(rs.next()) {
